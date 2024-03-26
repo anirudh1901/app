@@ -1,0 +1,48 @@
+body {
+    background-color: rgb(231, 229, 227) !important;
+  }
+  
+  .productName {
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 20px;
+  }
+  
+  .card {
+    border-radius: 12px !important;
+    margin-bottom: 12px;
+    background-color: #f6f6f6 !important;
+  }
+  
+  .productPrice {
+    padding: 0px 10px;
+    font-weight: 600 !important;
+    color: gray;
+  }
+  
+  .productRating {
+    padding: 0px 10px;
+  }
+  
+  .product-btn {
+    display: flex;
+    justify-content: end;
+  }
+
+  .productImg{
+    width:100%;
+    height:auto;
+    aspect-ratio: 3/2;
+    object-fit: contain;
+  }
+  
+
+a{
+    color: black !important;
+    text-decoration: none;
+    transition: 0.5s ease-in-out;
+  }
+
+a:hover{
+  color: gray !important;
+}

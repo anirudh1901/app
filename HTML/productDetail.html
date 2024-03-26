@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      .Add-btn{
+        background-color: rgb(39, 39, 221);
+        padding: 0.8rem;
+        border-radius: 30px;
+        border: none;
+        color: white;
+        font-weight: 500;
+      }
+
+      .Remove-btn{
+        background-color: rgb(213, 83, 83);
+        padding: 0.8rem;
+        border-radius: 30px;
+        border: none;
+        color: white;
+        font-weight: 500;
+      }
+      .row{
+        margin-top: 15vh !important;
+      }
+
+      
+a{
+    color: black !important;
+    text-decoration: none;
+    transition: 0.5s ease-in-out;
+  }
+
+a:hover{
+  color: gray !important;
+}
+    </style>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="first.css">
+    <link rel="stylesheet" href="prod.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Details</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .product-image img{
+        aspect-ratio: 2/2;
+        object-fit: contain;
+        width: 100%;
+      }
+
+    </style>
+  </head>
+  <body>
+    <nav >
+      <img src="images/logo1-removebg-preview.png" class="logo1" height="80px" weidth="80px">
+      <ul >
+          <li><a  href="First.html" >Home</a></li>
+                   <li><a href="prod.html">Products</a></li>
+                   <li><a href="Cart.html">Cart</a></li>
+                   <li><a href="login.html">Logout</a></li>
+  
+      </ul>
+  </nav>
+    <div class="container itemDetails">
+      <div class="row ">
+        <div class="col-md-6">
+          <div class="product-image ">
+            <img
+              id="productImage"
+              class="rounded-3 shadow"
+              src=""
+              alt="Product Image"
+            />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="product-details ">
+            <h1 id="productName"></h1>
+            <p id="productPrice"></p>
+            <p id="productRating"></p>
+
+            <p id="productDesc" class="lh-base" style="text-align: justify"></p>
+
+            <div class="btn3">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const addToCart = async (id) => {
+      
+        try {
+
+          const addCartValue = await fetch(
+            `http://localhost:8080/data/cart/${id}`,
+            {
+              method: "PUT",
+              ContentType: "application/json",
+            }
+          );
+          
+          if (addCartValue.ok) {
+alert("Added to cart")
+
+            const addCartButton = document.getElementById(`btn_${id}`);
+            addCartButton.classList.remove("Add-btn")
+            addCartButton.classList.add("Remove-btn")
+
+            addCartButton.innerHTML = "Remove from cart";
+            addCartButton.onclick = () => removeFromCart(id);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      const removeFromCart = async (id) => {
+        try {
+          const removeCartValue = await fetch(
+            `http://localhost:8080/data/removecart/${id}`,
+            {
+              method: "PUT",
+              ContentType: "application/json",
+            }
+          );
+          
+          if (removeCartValue.ok) {
+            alert("Removed from cart", id)
+
+            const removeCartButton = document.getElementById(`btn_${id}`);
+            removeCartButton.classList.add("Add-btn")
+            removeCartButton.classList.remove("Remove-btn")
+
+
+          
+            removeCartButton.innerHTML = "Add to cart";
+            removeCartButton.onclick = () => addToCart(id);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      const updateProductDetails = async () => {
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const productId = urlParams.get("id");
+
+          const response = await fetch(
+            `http://localhost:8080/data/product/${productId}`
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            
+
+            document.getElementById("productName").innerText =data.product_name;
+            document.getElementById("productDesc").innerText =
+              data.product_desc;
+            document.getElementById("productImage").src = data.image_link;
+            document.getElementById(
+              "productPrice"
+            ).innerText = `Price: Rs ${data.price}`;
+            document.getElementById(
+              "productRating"
+            ).innerHTML = `
+            <img class= src="./images/star.png" />
+            `;
+            
+
+            const btn1 = document.getElementsByClassName("btn3")[0];
+            btn1.innerHTML = `
+        <div class="col-md-6 h-100 mt-2">
+          ${
+            data.cart
+              ? `<button
+            id="btn_${data.rowno}"
+            onClick="removeFromCart(${data.rowno})"
+            class = "Remove-btn"
+          >
+            Remove from cart
+          </button>`
+              : `<button
+            id="btn_${data.rowno}" 
+            onClick="addToCart(${data.rowno})"
+            class = " Add-btn "
+          >
+            Add to cart
+          </button>`
+          }
+        </div>`;
+
+          } else {
+            console.error("Failed to fetch product details");
+          }
+        } catch (error) {
+          console.error("Failed to update product details", error);
+        }
+      };
+
+      updateProductDetails();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+body {
+    background-color: rgb(231, 229, 227) !important;
+  }
+  
+  .productName {
+    padding: 1rem;
+  }
+  
+  .card {
+    border-radius: 12px !important;
+    margin-bottom: 12px;
+    background-color: #f6f6f6 !important;
+  }
+  
+  .productPrice {
+    padding: 0px 10px;
+    font-weight: 600 !important;
+    color: gray;
+  }
+  
+  .productRating {
+    padding: 0px 10px;
+  }
+  
+  .product-btn {
+    display: flex;
+    justify-content: end;
+  }
+  
+  .productsCardBTN {
+    text-decoration: none;
+  }
+  
+  .cartImg {
+    aspect-ratio: 3/2;
+    width: 100%;
+    object-fit: contain;
+  }
+  
+  .cartRemoveBtn {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #productImage {
+    width: 100%;
+  }
+  

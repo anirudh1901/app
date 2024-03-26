@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      .rows{
+        margin-top: 10vh !important;
+      }
+     
+      .no-message{
+        margin-top: 20px;
+        font-size: 28px;
+        color: red;
+      }
+      
+a{
+    color: black !important;
+    text-decoration: none;
+    transition: 0.5s ease-in-out;
+  }
+
+a:hover{
+  color: gray !important;
+}
+    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="cart.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="first.css" />
+
+
+  </head>
+  <body>
+    <nav>
+      <img src="images/logo1-removebg-preview.png" class="logo1" height="80px" weidth="80px">
+      <ul>
+          <li><a href="First.html">Home</a></li>
+                   <li><a href="prod.html">Products</a></li>
+                   <li><a href="Cart.html">Cart</a></li>
+                   <li><a href="login.html">Logout</a></li>
+
+      </ul>
+  </nav>
+    <div class="container">
+      <div class="row rows">
+      <p class="h1 mt-2">My Cart</p>
+        <div class="no-cart-message">
+
+        </div>
+        <div class="col-md-7">
+          <div class="cart-value"></div>
+        </div>
+        <div class="col-md-5">
+          <div id="checkOutSection p-5 " class="checkOutSection card">
+            <p class="h1 p-2" >Cart Value</p>
+            <div class="checkOutProducts"></div>
+            <hr />
+            <div class="totalCartPrice"></div>
+          </div>
+
+          <div class="checkOutBtn text-end">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+       const checkOut = async () => {
+        alert("Order Placed")
+    try {
+        const response = await fetch("http://localhost:8080/data/checkOutCart", {
+            method: "PUT"
+        });
+        if (response.ok) {
+
+            alert("Order placed");
+
+            const myCart = document.querySelector(".cart-value");
+            myCart.innerHTML = '';
+
+            const checkOutSection = document.querySelector(".checkOutProducts");
+            checkOutSection.innerHTML = '';
+
+            const totalCartPrice = document.querySelector(".totalCartPrice");
+            totalCartPrice.innerHTML = '';
+
+            const checkOutBtn = document.querySelector(".checkOutBtn");
+            checkOutBtn.innerHTML = '';
+
+        }
+
+        location.reload();
+
+    } catch (error) {
+         console.error("Internal server error");
+    }
+};
+      const deleteFromCart = async (id) => {
+        try {
+          const removeCartValue = await fetch(
+            `http://localhost:8080/data/removecart/${id}`,
+            {
+              method: "PUT",
+              ContentType: "application/json",
+            }
+          );
+          
+          if (removeCartValue.ok) {
+            alert("Removed from cart")
+            location.reload();
+
+            const removeCartButton = document.getElementById(`btn_${id}`);
+            removeCartButton.classList.add("Add-btn")
+            removeCartButton.classList.remove("Remove-btn")
+
+
+          
+            removeCartButton.innerHTML = "Add to cart";
+            removeCartButton.onclick = () => addToCart(id);
+          }
+        } catch (error) {
+          
+        }
+      };
+      const fetchCartProducts = async () => {
+        
+        const response = await fetch(
+          "http://localhost:8080/data/cart"
+        );
+         
+        if (response.ok) {
+          const productsList = await response.json();
+          if(productsList.length === 0){
+           
+           
+
+            const noCart = document.querySelector(".no-cart-message")
+            noCart.innerHTML = "<h3 class='no-message'> Your Shopping cart is empty</h3>  "
+
+
+
+          }
+          const myCart = document.querySelector(".cart-value");
+          let totalPrice = 0;
+          productsList.forEach((product) => {
+            totalPrice += product.price;
+            myCart.innerHTML += `
+            <div class="card mt-4 shadow-sm  p-3">
+        <div class="row">
+          <div class="col-md-5">
+            
+            <p class = "h2">${product.product_name}</p>
+            <p class="h5 pt-1 text-secondary">Rs ${product.price}</p>
+          </div>
+          <div class="col-md-4">
+            <img src=${product.image_link} class="cartImg" alt=${product.name} />
+          </div>
+          <div class="col-md-3">
+            <div class = "cartRemoveBtn">
+            <button onClick = "deleteFromCart(${product.rowno})" class="btn   btn-danger">Remove</button>
+          </div>
+          </div>
+        </div>
+      </div>
+              `;
+
+            const checkOutSection = document.querySelector(".checkOutProducts");
+
+            checkOutSection.innerHTML += `
+
+            <p class="mx-4 ">${product.product_name} <span style = "float:right" class = "text-secondary">Rs ${product.price} </span></p>
+          
+          `;
+
+            const totalCartPrice = document.querySelector(".totalCartPrice");
+            totalCartPrice.innerHTML = `
+           <p class="mx-4 h6 pb-2 ">Total Price: <span style="float:right" > Rs ${totalPrice} </span> </p>
+           `;
+
+           const checkOutBtn = document.querySelector(".checkOutBtn");
+           checkOutBtn.innerHTML = `
+           <button onclick="checkOut()" class="btn btn-success w-50">Check Out</button>
+
+           `
+          });
+        }
+      };
+
+      fetchCartProducts();
+    </script>
+  </body>
+</html>

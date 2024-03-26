@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .backgroundImage {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            z-index: -1;
+            opacity: 0.8;
+            filter: blur(1px);
+            object-fit: cover;
+        }
+        .container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        form {
+            width: 30%;
+            background-color: rgb(42, 124, 195);
+            padding: 2rem;
+            color: white;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <img src="https://plus.unsplash.com/premium_photo-1682435561654-20d84cef00eb?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c2hvZXN8ZW58MHwwfDB8fHww" alt="" class="backgroundImage">
+    <div class="container">
+        <form id="signupForm">
+            <h2 class="text-center h2">Sign Up</h2>
+            <div class="mb-3">
+                <label for="signupName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="signupName" required>
+            </div>
+            <div class="mb-3">
+                <label for="signupUserName" class="form-label">User Name</label>
+                <input type="text" class="form-control" id="signupUserName" required>
+            </div>
+            <div class="mb-3">
+                <label for="signupPhone" class="form-label">Phone</label>
+                <input type="number" class="form-control" id="signupPhone" required>
+            </div>
+            <div class="mb-3">
+                <label for="signupPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="signupPassword" required>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-dark w-100 pt-2 px-4">Sign Up</button>
+            </div>
+            <a href="./login.html" class="text-light text-center w-100 d-block py-2">Already have an account? Login here</a>
+        </form>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+          const form = document.getElementById('signupForm');
+          form.addEventListener('submit', function (event) {
+              event.preventDefault();
+              const fullName = document.getElementById('signupName').value;
+              const username = document.getElementById('signupUserName').value;
+              const contactNumber = document.getElementById('signupPhone').value;
+              const password = document.getElementById('signupPassword').value;
+  
+              // Create a customer object
+              const customer = {
+                  username: username,
+                  password: password,
+                  full_name: fullName,
+                  contact_number: contactNumber
+              };
+  
+              // Send a POST request to the signup endpoint
+              fetch('http://localhost:8080/data/signup', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(customer)
+              })
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error(response.status);
+                  }
+                  return response.text();
+              })
+              .then(data => {
+                  alert(data); 
+              })
+              .catch((error) => {
+                  if(error.message === '400') {
+                      alert('User already exists'); 
+                  } else {
+                      alert('An error occurred: ' + error.message);
+                  }
+              });
+          });
+      });
+  </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
